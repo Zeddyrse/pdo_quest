@@ -1,0 +1,3 @@
+CREATE DATABASE wild_quest_2022;
+USE DATABASE wild_quest_2022;
+CREATE TABLE friends (id INT NOT NULL AUTO_INCREMENT,, firstname VARCHAR(100), lastname VARCHAR(100), PRIMARY KEY(id));

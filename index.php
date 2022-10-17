@@ -1,3 +1,32 @@
+<?php
+include_once("connec.php");
+require_once("connec.php");
+
+function createConnection(): PDO
+{
+    return new PDO("mysql:host=". SERVER . ";dbname=" . DATABASE . ";charset=utf8", USER, PASSWORD);
+}
+
+$firstname = isset($_POST['firstname']) ? trim($_POST['firstname']) : '';
+$lastname = isset($_POST['lastname']) ? trim($_POST['lastname']) : '';
+
+
+
+$connection = createConnection();
+$query = 'INSERT INTO friends (firstname, lastname) VALUES (:firstname, :lastname)';
+$statement = $connection->prepare($query);
+
+$statement->bindValue(":firstname", $firstname, PDO::PARAM_STR);
+$statement->bindValue(":lastname", $lastname, PDO::PARAM_STR);
+
+$newFriends = $statement->execute();
+
+$newStatement = $connection->query("SELECT * FROM friends");
+$newFriends = $newStatement->fetchAll(PDO::FETCH_ASSOC);
+var_dump($newFriends);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,17 +45,25 @@
     <main>
         <form action="" method="POST">
             <div class="input-group mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-default">Default</span>
-                <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                <span class="input-group-text" id="inputGroup-sizing-default">firstname</span>
+                <input name="firstname" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
             </div>
             <div class="input-group mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-default">Default</span>
-                <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                <span class="input-group-text" id="inputGroup-sizing-default">lastname</span>
+                <input name="lastname" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
             </div>
             <div class="d-grid gap-2">
-                <button class="btn btn-primary" type="button">Button</button>
+                <button type="submit" class="btn btn-primary" type="button">Button</button>
             </div>
         </form>
+        <ul>
+            <?php
+            foreach($newFriends as $newFriend)
+            { ?><li><?php echo $newFriend['firstname']." ".$newFriend['lastname'];?></li><?php
+
+            } ?>
+           
+        </ul>
     </main>
     <footer>
     </footer>
